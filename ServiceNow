@@ -1,0 +1,338 @@
+{
+	"info": {
+		"_postman_id": "b5963d4e-d9a8-4364-ae54-3ec7a08d6a57",
+		"name": "ServiceNow",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29625612",
+		"_collection_link": "https://red-equinox-685027.postman.co/workspace/POSTMAN-SEP~f9210303-80cd-400a-8e1b-a9b7ae5fe689/collection/29625612-b5963d4e-d9a8-4364-ae54-3ec7a08d6a57?action=share&source=collection_link&creator=29625612"
+	},
+	"item": [
+		{
+			"name": "REST_API_Explorer",
+			"item": [
+				{
+					"name": "TableAPI",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Resp = pm.response.json();\r",
+									"//pm.globals.set(\"sysid\",Resp.result[0].sys_id);\r",
+									"\r",
+									"Resp = pm.response.json();\r",
+									"pm.globals.set(\"tableName\",Resp.result[0].sys_class_name);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://dev166552.service-now.com/api/now/table/incident?sysparm_exclude_reference_link=true&sysparm_limit=1",
+							"protocol": "https",
+							"host": [
+								"dev166552",
+								"service-now",
+								"com"
+							],
+							"path": [
+								"api",
+								"now",
+								"table",
+								"incident"
+							],
+							"query": [
+								{
+									"key": "sysparm_exclude_reference_link",
+									"value": "true"
+								},
+								{
+									"key": "sysparm_limit",
+									"value": "1"
+								},
+								{
+									"key": "tableName",
+									"value": "incident",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create_A_Record",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"Resp = pm.response.json();\r",
+									"pm.globals.set(\"Create a record-sysid\",Resp.result.sys_id);\r",
+									"\r",
+									"//Resp = pm.response.json();\r",
+									"//pm.globals.set(\"sysid\",Resp.result[0].sys_id);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body matches Ramanathan\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Ramanathan\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"assigned_to\":\"Ramanathan\",\"incident_state\":\"1\",\"calendar_duration\":\"16/09/2023\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://dev166552.service-now.com/api/now/table/incident?sysparm_display_value=true",
+							"protocol": "https",
+							"host": [
+								"dev166552",
+								"service-now",
+								"com"
+							],
+							"path": [
+								"api",
+								"now",
+								"table",
+								"incident"
+							],
+							"query": [
+								{
+									"key": "sysparm_display_value",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve_a_record",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://dev166552.service-now.com/api/now/table/:{tableName}/:{sys_id}?sysparm_exclude_reference_link=true",
+							"protocol": "https",
+							"host": [
+								"dev166552",
+								"service-now",
+								"com"
+							],
+							"path": [
+								"api",
+								"now",
+								"table",
+								":{tableName}",
+								":{sys_id}"
+							],
+							"query": [
+								{
+									"key": "sysparm_exclude_reference_link",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "{tableName}",
+									"value": "{{tableName}}"
+								},
+								{
+									"key": "{sys_id}",
+									"value": "{{Create a record-sysid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modify",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Delivery Date\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Tomorrow\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"delivery_plan\":\"Tomorrow\",\"description\":\"ticket in progress\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://dev166552.service-now.com/api/now/table/:tableName/:sys_id",
+							"protocol": "https",
+							"host": [
+								"dev166552",
+								"service-now",
+								"com"
+							],
+							"path": [
+								"api",
+								"now",
+								"table",
+								":tableName",
+								":sys_id"
+							],
+							"variable": [
+								{
+									"key": "tableName",
+									"value": "{{tableName}}"
+								},
+								{
+									"key": "sys_id",
+									"value": "{{Create a record-sysid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTheRecord",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body matches string\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Monday\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"description\":\"work in porgess\",\"delivery_plan\":\"Monday (18/09/2023)\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://dev166552.service-now.com/api/now/table/:tableName/:sys_id",
+							"protocol": "https",
+							"host": [
+								"dev166552",
+								"service-now",
+								"com"
+							],
+							"path": [
+								"api",
+								"now",
+								"table",
+								":tableName",
+								":sys_id"
+							],
+							"variable": [
+								{
+									"key": "tableName",
+									"value": "{{tableName}}"
+								},
+								{
+									"key": "sys_id",
+									"value": "{{Create a record-sysid}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "basic",
+				"basic": [
+					{
+						"key": "password",
+						"value": "%bkwa$JD7EX7",
+						"type": "string"
+					},
+					{
+						"key": "username",
+						"value": "admin",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	]
+}
