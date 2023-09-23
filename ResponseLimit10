@@ -1,0 +1,39 @@
+package week3day1;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.testng.annotations.Test;
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+
+
+@Test
+public class GetAllIncidentQPS {
+	
+	public void getall() {
+	
+		Map<String,String> query =new HashMap<String,String>();
+		query.put("sysparm_fields", "short_description,sys_id");
+		query.put("sysparm_limit", "10");
+		
+		//End Point
+		RestAssured.baseURI="https://dev166552.service-now.com/api/now/table/incident";
+	
+		//Authentication
+		
+		RestAssured.authentication=RestAssured.basic("admin", "%bkwa$JD7EX7");
+		
+		//add query parameter and get the 10 limits
+		
+		RequestSpecification queryParam = RestAssured.given().queryParams(query);
+		Response resp = queryParam.get();
+		resp.prettyPrint();
+		
+		
+	}
+
+}
